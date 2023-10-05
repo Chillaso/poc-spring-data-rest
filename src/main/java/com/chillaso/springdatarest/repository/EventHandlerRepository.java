@@ -1,9 +1,6 @@
 package com.chillaso.springdatarest.repository;
 
-import com.chillaso.springdatarest.entity.Author;
-import com.chillaso.springdatarest.entity.AuthorBook;
-import com.chillaso.springdatarest.entity.Book;
-import com.chillaso.springdatarest.entity.Flow;
+import com.chillaso.springdatarest.entity.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.rest.core.annotation.*;
 import org.springframework.stereotype.Component;
@@ -19,7 +16,11 @@ public class EventHandlerRepository {
     }
 
     @HandleBeforeCreate
-    private void handleBookBeforeCreate(Author author){
-        author.getBooks().forEach(authorBook -> authorBook.setAuthor(author));
+    private void handleAuthorBeforeCreate(Author author){
+        for (AuthorBook authorBook : author.getBooks()) {
+            final Long bookId = authorBook.getBook().getId();
+            authorBook.setAuthorBookId(new AuthorBookId(author.getId(), bookId));
+            authorBook.setAuthor(author);
+        }
     }
 }
